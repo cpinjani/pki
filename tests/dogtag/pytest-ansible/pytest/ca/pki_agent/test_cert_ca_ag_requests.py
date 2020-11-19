@@ -661,7 +661,7 @@ def test_ca_ag_profile_1day_validity_search_certs(ansible_module):
             assert 'VALID' in result['stdout']
             assert 'Serial Number: {}'.format(cert_serial.lower()) in result['stdout']
         else:
-            pytest.fail("Failed to run: {}".format(" ".join(result['cmd'])))
+            pytest.fail("Failed to run: {}".format(" ".join(result['stderr'])))
 
     out = ansible_module.shell('pki -d {} -c {} -p {} -n {} client-cert-import --serial {}'.format(constants.NSSDB,constants.CLIENT_DATABASE_PASSWORD, constants.CA_HTTPS_PORT, user, cert_serial))
     for result in out.values():
@@ -681,14 +681,15 @@ def test_ca_ag_profile_1day_validity_search_certs(ansible_module):
             pytest.fail("Failed to run: {}".format("".join(result['cmd'])))
 
     restart_instance(ansible_module)
-
+    
+    time.sleep(10)
     out = ansible_module.shell('pki -d {} -c {} -p {} -n "{}" ca-cert-show {}'.format(constants.NSSDB, constants.CLIENT_DATABASE_PASSWORD, constants.CA_HTTPS_PORT, valid_agent_user, cert_serial))
     for result in out.values():
         if result['rc'] == 0:
             assert 'EXPIRED' in result['stdout']
             assert 'Serial Number: {}'.format(cert_serial.lower()) in result['stdout']
         else:
-            pytest.fail("Failed to run: {}".format("".join(result['cmd'])))
+            pytest.fail("Failed to run: {}".format("".join(result['stderr_lines'])))
 
     req_data = {
         'op': 'srchCerts',
@@ -832,6 +833,7 @@ def test_ca_ag_search_certs_basic_contraints():
         pytest.fail()
 
 
+@pytest.mark.skip(reason="BZ 1891710")
 def test_ca_ag_generate_netscape_profile_search_cert(ansible_module):
     """
     :id: 56c89a71-c094-47aa-a23d-e13bd5db2b24

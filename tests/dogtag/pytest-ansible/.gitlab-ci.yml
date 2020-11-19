@@ -775,25 +775,29 @@ topo_00_Bz_fips_enabled_ps:
     - ansible-playbook  -u fedora --become  -i $HOSTFILE $PYTEST_DIR/installation/main.yml --extra-vars "topology=topology-SubCA" -vv  | sed 's/\\n/\n/g'
     - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE $PYTEST_DIR/pytest/ca/ocsp/test_bug_1666907_enable_aia_ocsp_cert_checking_for_entire_cert_chain.py -q -s --junitxml $CI_PROJECT_DIR/bz_1666907_junit.xml -vv
 
+#PASS
 .cert_ca_ag_tests-topo-01-cp:
   <<: *job_definition
   stage: tier2-shared
   script:
     - ansible-playbook  -u fedora --become  -i $HOSTFILE $PYTEST_DIR/installation/main.yml --extra-vars "topology=topology-01" -vv  | sed 's/\\n/\n/g'
     - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master $PYTEST_DIR/pytest/sanity/test_role_users.py -q -s --junitxml $CI_PROJECT_DIR/role_user_creation_junit.xml -qsvvv
-    - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE $PYTEST_DIR/pytest/ca/pki_agent/ --junitxml $CI_PROJECT_DIR/pki_agent.xml -qsvvvv
+    - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE $PYTEST_DIR/pytest/ca/pki_agent/* --junitxml $CI_PROJECT_DIR/pki_agent.xml -qsvvvv
 
+#PASS
 .cert_ca_ag_tests-topo-02-cp:
   <<: *job_definition
   stage: tier2-discrete
   script:
     - ansible-playbook  -u fedora --become  -i $HOSTFILE $PYTEST_DIR/installation/main.yml --extra-vars "topology=topology-02" -vv  | sed 's/\\n/\n/g'
     - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master $PYTEST_DIR/pytest/sanity/test_role_users.py -q -s --junitxml $CI_PROJECT_DIR/role_user_creation_junit.xml -qsvvv
-    - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE $PYTEST_DIR/pytest/ca/pki_agent/ --junitxml $CI_PROJECT_DIR/pki_agent.xml -qsvvvv
+    - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE $PYTEST_DIR/pytest/ca/pki_agent/* --junitxml $CI_PROJECT_DIR/pki_agent.xml -qsvvvv
 
-topo-00-BZ-1426572-ca-cert-fix-cp:
+# Bugzilla filed: 1897120
+topo-00-BZ-ca-cp:
   <<: *job_definition
   stage: tier2-other
   script:
     - ansible-playbook  -u fedora --become  -i $HOSTFILE $PYTEST_DIR/installation/main.yml --extra-vars "topology=topology-00" -vv  | sed 's/\\n/\n/g'
     - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE --ansible-playbook-directory $PYTEST_DIR/pytest/ca/bugzilla/ $PYTEST_DIR/pytest/ca/bugzilla/test_bug_1426572_cert_fix_tool.py -qsvv --junitxml $CI_PROJECT_DIR/BZ_1426572_junit.xml
+    - py.test --html=$CI_PROJECT_DIR/${CI_JOB_NAME}_html_report.html --self-contained-html --ansible-user=fedora --ansible-become --ansible-inventory $HOSTFILE  --ansible-host-pattern master --ansible-playbook-inventory $HOSTFILE $PYTEST_DIR/pytest/ca/bugzilla/test_bug_1656772_man_pkispawn_having_reference_to_setup-ds.py --junitxml $CI_PROJECT_DIR/bug_1656772.xml -qsvvvv
